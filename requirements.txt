@@ -1,0 +1,4 @@
+customtkinter==5.2.2
+Pillow==10.4.0
+Requests==2.25.1
+yt_dlp==2024.11.18

@@ -1,0 +1,11 @@
+To simplify the installation process, the required FFmpeg executables (`ffmpeg` and `ffprobe`) are already included in this 7zip archive named `Extract_Here.7z`. Simply right-click on `Extract_Here.7z` and select "Extract Here." This will place the correct files in the `bin` directory.
+
+
+File Structure Should Look Like This (After Extraction):
+
+youtube-downloader/
+├── bin/
+│   ├── ffmpeg.exe
+│   ├── ffprobe.exe
+│   └── Extract_Here.7z
+└── ...
