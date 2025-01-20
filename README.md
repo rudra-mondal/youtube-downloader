@@ -1,13 +1,17 @@
-
-![Logo](https://github.com/user-attachments/assets/9fe6761a-63d3-4517-9572-9aa284f67a0a)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9fe6761a-63d3-4517-9572-9aa284f67a0a" alt="Logo" width="500"> 
+</p>
 
 # 🚀 YouTube Downloader 🚀
 
 This Python application allows you to easily download videos from YouTube and Facebook. It provides a user-friendly graphical interface built with CustomTkinter and uses `yt-dlp` for downloading and `ffmpeg` for format conversion.
 
-*👇 Here is a quick look 👇*
+<h3 align="center"><i>👇 Here is a quick look 👇</i></h3>
 
-![Image](https://github.com/user-attachments/assets/ecc3eb99-e2c4-49fd-b16a-d1a55c6c1d4a)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ecc3eb99-e2c4-49fd-b16a-d1a55c6c1d4a" alt="App Interface" width="550"> 
+</p>
+
 ## ✨ Features
 
 - **Support for YouTube and Facebook:** Download videos from both platforms.
