@@ -164,7 +164,7 @@ class YouTubeDownloader(ctk.CTk):
         # Footer
         self.footer_label = AniLabel(self.main_frame, text="𓆩ʚ Crafted by Rudra ɞ𓆪", font=("Helvetica", 12, "bold"), text_color="#777777", cursor="hand2")
         self.footer_label.place(relx=0.5, rely=0.98, anchor="s")
-        self.footer_label.bind("<Button-1>", lambda e: webbrowser.open_new("https://github.com/rudramondal815"))
+        self.footer_label.bind("<Button-1>", lambda e: webbrowser.open_new("https://github.com/rudra-mondal"))
 
         # Initialize variables
         self.video_data = None
