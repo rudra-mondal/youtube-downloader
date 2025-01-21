@@ -36,7 +36,7 @@ Even if you can't contribute financially, spreading the word about this project 
 This application offers two installation methods: a simple installer for end-users and a manual installation for developers or users who prefer that approach.
 
 **Method 1: Installer (Recommended) ✨**
-- Download the latest installer for your operating system from the [Releases](https://github.com/RudraMondal815/youtube-downloader/releases) page.
+- Download the latest installer for your operating system from the [Releases](https://github.com/rudra-mondal/youtube-downloader/releases) page.
 - Run the downloaded installer file and follow the on-screen instructions.  This will install the application and all required dependencies, including FFmpeg.
 - After installation, you can find the application in your start menu.
 
@@ -48,7 +48,7 @@ This project requires Python 3.7 or higher.  We strongly recommend using a virtu
 **1. Clone the Repository:**
 
 ```bash
-git clone https://github.com/RudraMondal815/youtube-downloader.git
+git clone https://github.com/rudra-mondal/youtube-downloader.git
 ```
 
 **2. Navigate to the Project Directory:**
