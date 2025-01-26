@@ -40,6 +40,7 @@ import os
 import re
 import sys
 import yt_dlp
+import pygame
 import threading
 import webbrowser
 import subprocess
@@ -69,6 +70,17 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+# Initialize pygame mixer
+pygame.mixer.init()
+
+# Load sound effects
+fetch_start_sound = pygame.mixer.Sound(resource_path("audio\\click.mp3"))
+download_start_sound = pygame.mixer.Sound(resource_path("audio\\click.mp3"))
+fetch_complete_sound = pygame.mixer.Sound(resource_path("audio\\fetch_complete.mp3"))
+download_complete_sound = pygame.mixer.Sound(resource_path("audio\\download_complete.mp3")) 
+error_sound = pygame.mixer.Sound(resource_path("audio\\error.mp3"))
+no_url_sound = pygame.mixer.Sound(resource_path("audio\\no_url.mp3"))
 
 # Animated label for the footer
 class AniLabel(CTkLabel):
@@ -174,6 +186,7 @@ class YouTubeDownloader(ctk.CTk):
         self.start_time = None
         self.last_downloaded_bytes = 0
         self.last_time = None
+        self.last_speed = None
         os.makedirs(self.download_path, exist_ok=True)
     
     # Fetches video information based on the provided URL.
@@ -181,6 +194,7 @@ class YouTubeDownloader(ctk.CTk):
         url = self.url_entry.get()
         if not url:
             self.metadata_label.configure(text="Please enter a valid URL first!", text_color=RED)
+            no_url_sound.play()
             return
         
         self.status_label.configure(text="Detecting Platform...", text_color="yellow")
@@ -220,15 +234,18 @@ class YouTubeDownloader(ctk.CTk):
 
         if platform == "youtube":
             self.status_label.configure(text="Getting YouTube video information...", text_color="yellow")
+            fetch_start_sound.play()
             self._fetch_youtube_info(url)
         elif platform == "facebook":
             self.status_label.configure(text="Getting Facebook video information...", text_color="yellow")
+            fetch_start_sound.play()
             self._fetch_facebook_info(url)
         else:
             self.metadata_label.configure(text="Unsupported video platform or invalid URL.", text_color=RED)
             self.status_label.configure(text="")
             self.fetch_button.configure(state="normal")
             self.download_button.configure(state="normal")
+            no_url_sound.play()
     
     # Fetches video information for YouTube videos.
     def _fetch_youtube_info(self, url):
@@ -262,11 +279,14 @@ class YouTubeDownloader(ctk.CTk):
                  self.status_label.configure(text="")
                  self.fetch_button.configure(state="normal")
                  self.download_button.configure(state="normal")
+                 fetch_complete_sound.play()
+
          except Exception as e:
              self.metadata_label.configure(text=f"Error fetching YouTube video info: {e}", text_color=RED)
              self.status_label.configure(text="")
              self.fetch_button.configure(state="normal")
              self.download_button.configure(state="normal")
+             error_sound.play()
     
     # Fetches video information for Facebook videos.
     def _fetch_facebook_info(self, url):
@@ -303,11 +323,14 @@ class YouTubeDownloader(ctk.CTk):
                 self.status_label.configure(text="")
                 self.fetch_button.configure(state="normal")
                 self.download_button.configure(state="normal")
+                fetch_complete_sound.play()
+
         except Exception as e:
             self.metadata_label.configure(text=f"Error fetching Facebook video info: {e}", text_color=RED)
             self.status_label.configure(text="")
             self.fetch_button.configure(state="normal")
             self.download_button.configure(state="normal")
+            error_sound.play()
 
     # Sets the download quality.
     def set_quality(self, choice):
@@ -329,12 +352,14 @@ class YouTubeDownloader(ctk.CTk):
         if not self.video_data:
             self.metadata_label.configure(text="Please fetch a video first!", text_color=RED)
             self.download_button.configure(state="normal")
+            no_url_sound.play()
             return
 
         url = self.url_entry.get()
         if not url:
             self.metadata_label.configure(text="Please enter a valid URL first!", text_color=RED)
             self.download_button.configure(state="normal")
+            no_url_sound.play()
             return
 
         platform = self.detect_video_platform(url)
@@ -345,16 +370,19 @@ class YouTubeDownloader(ctk.CTk):
 
         if platform == "youtube":
             threading.Thread(target=self.download_youtube_video, args=(url,), daemon=True).start()
+            download_start_sound.play()
         elif platform == "facebook":
             threading.Thread(target=self.download_facebook_video, args=(url,), daemon=True).start()
+            download_start_sound.play()
         else:
             self.status_label.configure(text="Unsupported video platform or invalid URL.", text_color=RED)
             self.download_button.configure(state="normal")
+            no_url_sound.play()
         
     def progress_callback(self, d):
         """
         Callback function for yt-dlp to update download progress.
-        Calculates speed, eta and updates the progress bar
+        Calculates speed, eta and updates the progress bar using a moving average for speed.
         """
         if d['status'] == 'downloading':
             downloaded_bytes = d.get('downloaded_bytes', 0)
@@ -362,10 +390,18 @@ class YouTubeDownloader(ctk.CTk):
             progress = downloaded_bytes / total_bytes
             self.progress_bar.set(progress)
 
-            # Calculate download speed and ETA
+            # Calculate download speed and ETA using a moving average
             current_time = time.time()
-            if current_time - self.last_time >= 1:  # Update every second
-                speed = (downloaded_bytes - self.last_downloaded_bytes) / (current_time - self.last_time)
+            time_diff = current_time - self.last_time
+            if time_diff >= 1:  # Update every second
+                speed = (downloaded_bytes - self.last_downloaded_bytes) / time_diff
+                speed = abs(speed)  # Ensure speed is always positive
+
+                # Moving average for speed calculation (adjust the weight as needed)
+                if self.last_speed is not None:
+                    speed = 0.7 * speed + 0.3 * self.last_speed  # Example: 30% weight to previous speed
+
+                self.last_speed = speed  # Update last speed for the next calculation
                 remaining_bytes = total_bytes - downloaded_bytes
                 eta = remaining_bytes / speed if speed > 0 else 0
 
@@ -394,10 +430,12 @@ class YouTubeDownloader(ctk.CTk):
                     speed_str = f"{speed/(1024*1024):.1f} MB/s"
 
                 eta_min = int(eta // 60)
+                eta_min = abs(eta_min)
                 eta_sec = int(eta % 60)
+                eta_sec = abs(eta_sec)
                 
                 self.time_label.configure(text=f"Speed: {speed_str}  |  Downloaded: {downloaded_str} / {total_str}  |  ETA: {eta_min}m {eta_sec}s")
-                
+
                 self.last_downloaded_bytes = downloaded_bytes
                 self.last_time = current_time
     
@@ -448,9 +486,11 @@ class YouTubeDownloader(ctk.CTk):
                 seconds = int(total_time % 60)
                 self.metadata_label.configure(text=f"Download and conversion completed in {minutes}m {seconds}s!", text_color=GREEN)
                 self.download_button.configure(state="normal")
+                download_complete_sound.play()
         except Exception as e:
             self.metadata_label.configure(text=f"Error during download or conversion: {e}", text_color=RED)
             self.download_button.configure(state="normal")
+            error_sound.play()
 
     def download_facebook_video(self, url):
          """Downloads a video from Facebook."""
@@ -501,9 +541,11 @@ class YouTubeDownloader(ctk.CTk):
                  seconds = int(total_time % 60)
                  self.metadata_label.configure(text=f"Download and conversion completed in {minutes}m {seconds}s!", text_color=GREEN)
                  self.download_button.configure(state="normal")
+                 download_complete_sound.play()
          except Exception as e:
              self.metadata_label.configure(text=f"Error during download or conversion: {e}", text_color=RED)
              self.download_button.configure(state="normal")
+             error_sound.play()
 
     def _convert_to_mp3(self, downloaded_file):
         """Converts a downloaded file to MP3 format."""
