@@ -205,18 +205,14 @@ class YouTubeDownloader(ctk.CTk):
     def detect_video_platform(self, link):
         # Patterns to detect Facebook video links
         facebook_patterns = [
-            r"^(https?://)?(www\.)?facebook\.com/.*/videos/.*",     # Standard Facebook video link
-            r"^(https?://)?(www\.)?fb\.watch/.*",                   # fb.watch short links
-            r"^(https?://)?(www\.)?facebook\.com/reel/.*",          # Facebook Reels
-            r"^(https?://)?(www\.)?facebook\.com/.*/posts/.*",      # Facebook posts with videos
-        ]
+            r"^(https?://)?(www\.|m\.)?facebook\.com/(.*)?(videos|reel|watch|live|posts|story\.php|video/embed|v|photos|groups/.*/(permalink/\d+|.*)|events/.*/(permalink/\d+|.*)|share/(v|r)/.*|share/.*)/.*",
+]
         
         # Patterns to detect YouTube video links
         youtube_patterns = [
-            r"^(https?://)?(www\.)?youtube\.com/watch\?v=.*",       # Standard YouTube video link
-            r"^(https?://)?youtu\.be/.*",                           # Shortened YouTube links
-            r"^(https?://)?(www\.)?youtube\.com/shorts/.*",         # YouTube Shorts
-        ]
+            r"^(https?://)?(www\.|m\.)?(youtube\.com/(watch\?v=|embed/|v/|shorts/|c/|user/|channel/|live/|playlist\?list=|attribution_link\?)|youtu\.be/).*",
+            r"^(https?://)?(www\.)?youtube-nocookie\.com/embed/.*" # No-cookie embeds (separate for clarity)
+]
 
         for pattern in facebook_patterns:
             if re.match(pattern, link, re.IGNORECASE):
