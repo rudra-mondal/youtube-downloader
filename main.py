@@ -270,12 +270,25 @@ class YouTubeDownloader(ctk.CTk):
 
                  formats = self.video_data['formats']
                  quality_choices = [
-                     f"{fmt.get('height')}p"
-                     for fmt in formats if fmt.get("vcodec") != "none" and fmt.get("height")
-                 ]
+                    f"{fmt.get('height')}p"
+                    for fmt in formats if fmt.get("vcodec") != "none" and fmt.get("height")
+                ]
                  quality_choices = sorted(set(quality_choices), key=lambda x: int(x[:-1]))
                  self.quality_options.configure(values=quality_choices)
-                 self.quality_options.set(quality_choices[0])
+                # Automatically select 1080p if available, else the next best resolution.
+                 quality_ints = [int(q[:-1]) for q in quality_choices if q[:-1].isdigit()]
+                 if 1080 in quality_ints:
+                    default_quality = "1080p"
+                 else:
+                    higher_than_1080 = [q for q in quality_ints if q > 1080]
+                    if higher_than_1080:
+                        default_quality = f"{min(higher_than_1080)}p"
+                    else:
+                        default_quality = f"{max(quality_ints)}p"
+
+                 self.quality_options.set(default_quality)
+                 self.download_quality = default_quality  # <-- Ensure the variable is updated.
+
                  self.status_label.configure(text="")
                  self.fetch_button.configure(state="normal")
                  self.download_button.configure(state="normal")
@@ -319,7 +332,19 @@ class YouTubeDownloader(ctk.CTk):
                 ]
                 quality_choices = sorted(set(quality_choices), key=lambda x: int(x[:-1]))
                 self.quality_options.configure(values=quality_choices)
-                self.quality_options.set(quality_choices[0])
+                quality_ints = [int(q[:-1]) for q in quality_choices if q[:-1].isdigit()]
+                if 1080 in quality_ints:
+                    default_quality = "1080p"
+                else:
+                    higher_than_1080 = [q for q in quality_ints if q > 1080]
+                    if higher_than_1080:
+                        default_quality = f"{min(higher_than_1080)}p"
+                    else:
+                        default_quality = f"{max(quality_ints)}p"
+
+                self.quality_options.set(default_quality)
+                self.download_quality = default_quality  # <-- Ensure the variable is updated.
+
                 self.status_label.configure(text="")
                 self.fetch_button.configure(state="normal")
                 self.download_button.configure(state="normal")
@@ -382,11 +407,13 @@ class YouTubeDownloader(ctk.CTk):
     def progress_callback(self, d):
         """
         Callback function for yt-dlp to update download progress.
-        Calculates speed, eta and updates the progress bar using a moving average for speed.
+        Calculates speed, ETA and updates the progress bar using a moving average for speed.
         """
         if d['status'] == 'downloading':
             downloaded_bytes = d.get('downloaded_bytes', 0)
-            total_bytes = d.get('total_bytes', 1)
+            total_bytes = d.get('total_bytes')
+            if not total_bytes or total_bytes < 1024:
+                total_bytes = d.get('total_bytes_estimate', 1)
             progress = downloaded_bytes / total_bytes
             self.progress_bar.set(progress)
 
