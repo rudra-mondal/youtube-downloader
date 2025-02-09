@@ -59,7 +59,7 @@ ctk.set_default_color_theme("blue")
 # Constants for colors
 RED = "#FF0000"
 GREEN = "#00FF00"
-BLUE = "#0000FF"
+GREY = "#A0A0A0"
 
 # Asset Loading
 def resource_path(relative_path):
@@ -125,7 +125,7 @@ class YouTubeDownloader(ctk.CTk):
         self.fetch_button.pack(side="right", padx=(0, 15))
 
         # Video Thumbnail
-        self.thumbnail_label = ctk.CTkLabel(self.main_frame, text="")
+        self.thumbnail_label = ctk.CTkLabel(self.main_frame, text="", corner_radius=10)
         self.thumbnail_label.pack(pady=10)
 
         # Video Metadata
@@ -139,12 +139,12 @@ class YouTubeDownloader(ctk.CTk):
         self.status_label.pack(pady=1)
 
         # Progress Bar
-        self.progress_bar = ctk.CTkProgressBar(self.main_frame, width=600, fg_color="#333333")
+        self.progress_bar = ctk.CTkProgressBar(self.main_frame, width=600, fg_color="#3A3A3A")
         self.progress_bar.pack(pady=10)
         self.progress_bar.set(0)  # Initialize progress to 0%
 
         # Time Estimate Label
-        self.time_label = ctk.CTkLabel(self.main_frame, text="", font=("Helvetica", 12))
+        self.time_label = ctk.CTkLabel(self.main_frame, text="", font=("Helvetica", 12), text_color=GREY)
         self.time_label.pack(pady=1)
 
         # Video Quality and Format Options
@@ -166,7 +166,7 @@ class YouTubeDownloader(ctk.CTk):
         self.path_button.grid(row=2, column=1, padx=10, pady=10)
        
         # Path Display
-        self.path_display = ctk.CTkLabel(self.options_frame, text=os.path.join(os.environ['USERPROFILE'], 'Downloads'), text_color="#ffff00", font=("Arial", 12))
+        self.path_display = ctk.CTkLabel(self.options_frame, text=os.path.join(os.environ['USERPROFILE'], 'Downloads'), text_color=GREY, font=("Arial", 12))
         self.path_display.grid(row=2, column=2, padx=10, pady=10)
 
         # Download Button

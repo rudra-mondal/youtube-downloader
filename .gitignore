@@ -1,2 +1,10 @@
 *.exe
 venv
+test.py
+commands.txt
+icon.ico
+dist
+build
+__pycache__
+.vscode
+*.spec
