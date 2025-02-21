@@ -3,8 +3,11 @@ venv
 test.py
 commands.txt
 icon.ico
+Installer_icon.ico
 dist
 build
 __pycache__
 .vscode
 *.spec
+LICENSE.txt
+*.iss
