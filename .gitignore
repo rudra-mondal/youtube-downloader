@@ -1,5 +1,5 @@
 *.exe
-venv
+.venv
 test.py
 commands.txt
 icon.ico
