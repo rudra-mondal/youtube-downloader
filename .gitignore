@@ -1,6 +1,7 @@
 *.exe
 .venv
 test.py
+test1.py
 commands.txt
 icon.ico
 Installer_icon.ico
