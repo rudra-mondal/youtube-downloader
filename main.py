@@ -53,13 +53,14 @@ THUMBNAIL_HEIGHT = 158
 CONTROL_HEIGHT = 48
 BORDER_RAD = 10
 
-# --- Resource Path Function (Unchanged) ---
+# --- Resource Path Function (Updated for PyInstaller --onedir mode) ---
 def resource_path(relative_path):
-    try: base_path = sys._MEIPASS2
-    except Exception:
-        try: base_path = sys._MEIPASS
-        except Exception: base_path = os.path.abspath(".")
-    # Use os.path.join for cross-platform compatibility within the function
+    """ Get absolute path to resource, works for dev and for PyInstaller --onedir """
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.abspath(".")
+
     return os.path.join(base_path, relative_path)
 
 # --- Sound Handling (Unchanged) ---
@@ -514,6 +515,7 @@ def main(page: Page):
     page.window.min_height = 750
     page.window.resizable = True
     page.window.maximizable = True
+    page.window.icon = resource_path("images/icon.ico")
     page.theme_mode = ft.ThemeMode.DARK
     page.vertical_alignment = MainAxisAlignment.START
     page.horizontal_alignment = CrossAxisAlignment.CENTER
@@ -624,7 +626,7 @@ def main(page: Page):
     )
 
     download_button = FilledButton(
-        "Download", icon=ft.icons.DOWNLOAD_FOR_OFFLINE_ROUNDED,
+        "Download", icon=ft.icons.FILE_DOWNLOAD_OUTLINED,
         height=CONTROL_HEIGHT + 4, width=220, disabled=True, on_click=app_logic.start_download,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=BORDER_RAD),
