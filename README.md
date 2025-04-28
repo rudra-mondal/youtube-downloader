@@ -87,7 +87,7 @@ pip install -r requirements.txt
 **5. FFmpeg Installation:**
 
 FFmpeg is **already included** in the `bin` folder of this repository, so you don't need to download or install it separately. The application is configured to use the FFmpeg executables from this folder.
-## ⌨️ Usage/Examples
+## ⌨️ Usage/Examples (Old version)
 
 
 1. **Run the Application:** Doubble-Click on the installed file *or:*

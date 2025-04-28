@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-YouTube, Facebook & Pinterest Downloader (Flet UI - FFprobe Path Fix V9)
-Author: Rudra Mondal (Logic), AI Assistant (Flet UI Adaptation & Styling)
+YouTube, Facebook & Pinterest Downloader (Flet UI)
+Author: Rudra Mondal
 
 This script allows users to download videos, images, and GIFs from YouTube, Facebook, and Pinterest.
 It provides a modern, responsive graphical user interface built with Flet,
