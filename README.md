@@ -4,12 +4,12 @@
 
 # 🚀 YouTube Downloader 🚀
 
-This Python application allows you to easily download videos from YouTube and Facebook. It provides a user-friendly graphical interface built with CustomTkinter and uses `yt-dlp` for downloading and `ffmpeg` for format conversion.
+This Python application allows you to easily download videos from YouTube and Facebook. It provides a user-friendly graphical interface built with Flet and uses `yt-dlp` for downloading and `ffmpeg` for format conversion.
 
 <h3 align="center"><i>👇 Here is a quick look 👇</i></h3>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/ecc3eb99-e2c4-49fd-b16a-d1a55c6c1d4a" alt="App Interface" width="550"> 
+  <img src="https://github.com/user-attachments/assets/c97b09bc-2f20-4001-b640-76eb73a596b0" alt="App Interface" width="550"> 
 </p>
 
 ## ✨ Features
@@ -124,7 +124,7 @@ This section provides solutions to common problems you might encounter.  If you'
 
 **1. 📦 `ModuleNotFoundError`:**
 
-* **Problem:** You see an error like `ModuleNotFoundError: No module named 'customtkinter'` (or another module).
+* **Problem:** You see an error like `ModuleNotFoundError: No module named 'flet'` (or another module).
 * **Solution:** This means some Python packages are missing. 
     1. Activate your virtual environment *(if you're using one)*.
     2. Run `pip install -r requirements.txt` in your project directory.
@@ -152,7 +152,7 @@ This section provides solutions to common problems you might encounter.  If you'
 
 **5. 🛠️ Installer Issues:**
 * **Problem:** Problems creating the installer file with `pyinstaller`.
-* **Solution:** Make sure you've included the `images` and `bin` folders in your executable. Use this command:  `pyinstaller --onefile --noconsole --add-data "images;images" --add-data "bin;bin" your_script_name.py`
+* **Solution:** Make sure you've included the `images`, `bin`, `audio` and `cookies` folders with your executable. Use this command:  `pyinstaller --name YouTubeDownloader --onedir --windowed --icon=images/icon.ico main.py`. After that you will find a `YouTubeDownloader` named folder into the `dist` folder where you have to manually copy all the assets folders to make the exe workable. 
 
 **6.  📁 `sys._MEIPASS2` Issues (for Packaged Executables):**
 

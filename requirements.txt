@@ -1,6 +1,6 @@
-customtkinter==5.2.2
+flet==0.23.0
 Pillow==10.4.0
 Requests==2.25.1
 pygame==2.6.1
-yt_dlp==2024.11.18
+yt-dlp==2025.3.31
 pyinstaller==6.12.0
