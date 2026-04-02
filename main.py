@@ -16,7 +16,6 @@ import sys
 import yt_dlp
 import pygame
 import threading
-import webbrowser
 import subprocess
 import math
 import flet as ft
