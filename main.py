@@ -134,7 +134,9 @@ class DownloaderAppLogic:
             buffered = BytesIO()
             img.save(buffered, format="PNG")
             return base64.b64encode(buffered.getvalue()).decode('utf-8')
-        except Exception as e: print(f"Error creating placeholder: {e}"); return None
+        except Exception as e:
+            print(f"Error creating placeholder: {e}")
+            return None
 
     def _update_ui(self, control, **kwargs):
         if not control or not control.uid or not self.page or not control.page:
@@ -252,7 +254,9 @@ class DownloaderAppLogic:
             thumbnail.thumbnail((THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)); buffered = BytesIO()
             thumbnail.save(buffered, format="PNG"); img_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
             self._update_ui(self.thumbnail_image, src_base64=img_base64, tooltip="Content Thumbnail")
-        except Exception as e: print(f"Error processing thumbnail: {e}"); self._update_ui(self.thumbnail_image, src_base64=self.placeholder_base64, tooltip=f"Thumbnail Error: {e}")
+        except Exception as e:
+            print(f"Error processing thumbnail: {e}")
+            self._update_ui(self.thumbnail_image, src_base64=self.placeholder_base64, tooltip=f"Thumbnail Error: {e}")
 
     def _finalize_fetch(self, success=True, error_message=None): # Unchanged
         if success:
@@ -343,21 +347,30 @@ class DownloaderAppLogic:
                          guessed_path = os.path.splitext(output_template % {'ext': 'dummy'})[0] + '.' + expected_ext
                          if os.path.exists(guessed_path): downloaded_file_path = guessed_path; print(f"Warning: prepare_filename unreliable, using guessed path: {downloaded_file_path}")
                          else: raise yt_dlp.utils.DownloadError(f"Download finished, but cannot locate output file. Info: {info_dict.get('filepath', 'N/A')}")
-                except yt_dlp.utils.DownloadError as e: self._finalize_download(success=False, message=f"Download Error: {e}"); return
-                except Exception as e: self._finalize_download(success=False, message=f"Error during download: {e}"); print(f"Detailed ydl error: {e}"); return
+                except yt_dlp.utils.DownloadError as e:
+                    self._finalize_download(success=False, message=f"Download Error: {e}")
+                    return
+                except Exception as e:
+                    self._finalize_download(success=False, message=f"Error during download: {e}")
+                    print(f"Detailed ydl error: {e}")
+                    return
             if not downloaded_file_path or not os.path.exists(downloaded_file_path): self._finalize_download(success=False, message="Error: Output file not found after download."); return
             final_filepath = downloaded_file_path
             if needs_conversion:
                 try:
                     if self.download_format == "mp3": final_filepath = self._convert_to_mp3(downloaded_file_path)
                     elif self.download_format == "mp4": final_filepath = self._convert_to_mp4(downloaded_file_path)
-                except Exception as e: self._finalize_download(success=False, message=f"Conversion Error: {e}"); return
+                except Exception as e:
+                    self._finalize_download(success=False, message=f"Conversion Error: {e}")
+                    return
             if final_filepath and os.path.exists(final_filepath):
                 total_time = time.time() - self.start_time; minutes, seconds = divmod(int(total_time), 60); final_filename = os.path.basename(final_filepath)
                 msg = f"{'Download' if not needs_conversion else 'Download & Conversion'} complete!\nTime: {minutes}m {seconds}s"
                 self._finalize_download(success=True, message=msg)
             else: self._finalize_download(success=False, message="Error: Final file not found after processing.")
-        except Exception as e: self._finalize_download(success=False, message=f"An unexpected error occurred: {e}"); print(f"Detailed download/convert thread error: {type(e).__name__}: {e}")
+        except Exception as e:
+            self._finalize_download(success=False, message=f"An unexpected error occurred: {e}")
+            print(f"Detailed download/convert thread error: {type(e).__name__}: {e}")
 
     def _finalize_download(self, success=True, message=None): # Unchanged
         final_progress = 1.0 if success else (self.progress_bar.value if self.progress_bar.value is not None else 0); bar_color = SUCCESS_COLOR if success else ERROR_COLOR
@@ -500,7 +513,9 @@ class DownloaderAppLogic:
              duration = float(res.stdout.strip())
              # print(f"Duration for {filepath}: {duration}") # Debug duration
              return duration if duration > 0 else None # Return None if duration is zero or negative
-        except Exception as e: print(f"Error getting duration: {e}"); return None
+        except Exception as e:
+             print(f"Error getting duration: {e}")
+             return None
 
     def sanitize_filename(self, filename): # Unchanged
         sanitized = re.sub(r'[\\/*?:"<>|\x00-\x1f\x7f]', '', filename); sanitized = re.sub(r'\s+', '_', sanitized).strip('_'); sanitized = re.sub(r'__+', '_', sanitized)
