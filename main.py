@@ -418,11 +418,13 @@ class DownloaderAppLogic:
         command = [ ffmpeg_cmd_path, "-y", "-i", downloaded_file_abs, "-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k", "-progress", "pipe:1", converted_file ]
         process = subprocess.Popen( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, creationflags=creation_flags, encoding='utf-8', errors='replace' )
         last_update_time = time.time()
+        time_regex = re.compile(r"time=(\d{2}:\d{2}:\d{2}\.\d+)")
+        out_time_ms_regex = re.compile(r"out_time_ms=(\d+)")
         while True:
             line = process.stdout.readline();
             if not line: break
             # print(f"FFMPEG_MP3_RAW: {line.strip()}") # Debugging
-            time_match = re.search(r"time=(\d{2}:\d{2}:\d{2}\.\d+)", line) or re.search(r"out_time_ms=(\d+)", line)
+            time_match = time_regex.search(line) or out_time_ms_regex.search(line)
             current_seconds = None
             if time_match:
                 try:
@@ -462,11 +464,13 @@ class DownloaderAppLogic:
         command = [ ffmpeg_cmd_path, "-y", "-i", downloaded_file_abs, "-c:v", "libx264", "-preset", "fast", "-crf", "23", "-c:a", "aac", "-b:a", "192k", "-progress", "pipe:1", converted_file ]
         process = subprocess.Popen( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, creationflags=creation_flags, encoding='utf-8', errors='replace' )
         last_update_time = time.time()
+        time_regex = re.compile(r"time=(\d{2}:\d{2}:\d{2}\.\d+)")
+        out_time_ms_regex = re.compile(r"out_time_ms=(\d+)")
         while True:
             line = process.stdout.readline();
             if not line: break
             # print(f"FFMPEG_MP4_RAW: {line.strip()}") # Debugging
-            time_match = re.search(r"time=(\d{2}:\d{2}:\d{2}\.\d+)", line) or re.search(r"out_time_ms=(\d+)", line)
+            time_match = time_regex.search(line) or out_time_ms_regex.search(line)
             current_seconds = None
             if time_match:
                 try:
