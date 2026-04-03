@@ -91,6 +91,10 @@ class YtDlpLogger:
 
 # --- Core Downloader Logic Class (FFmpeg/probe path fixed) ---
 class DownloaderAppLogic:
+    # Pre-compile regex for performance
+    RE_TIME = re.compile(r"time=(\d{2}:\d{2}:\d{2}\.\d+)")
+    RE_MS = re.compile(r"out_time_ms=(\d+)")
+
     def __init__(self, page: Page):
         self.page = page
         self.content_data = None
@@ -422,7 +426,7 @@ class DownloaderAppLogic:
             line = process.stdout.readline();
             if not line: break
             # print(f"FFMPEG_MP3_RAW: {line.strip()}") # Debugging
-            time_match = re.search(r"time=(\d{2}:\d{2}:\d{2}\.\d+)", line) or re.search(r"out_time_ms=(\d+)", line)
+            time_match = self.RE_TIME.search(line) or self.RE_MS.search(line)
             current_seconds = None
             if time_match:
                 try:
@@ -466,7 +470,7 @@ class DownloaderAppLogic:
             line = process.stdout.readline();
             if not line: break
             # print(f"FFMPEG_MP4_RAW: {line.strip()}") # Debugging
-            time_match = re.search(r"time=(\d{2}:\d{2}:\d{2}\.\d+)", line) or re.search(r"out_time_ms=(\d+)", line)
+            time_match = self.RE_TIME.search(line) or self.RE_MS.search(line)
             current_seconds = None
             if time_match:
                 try:
